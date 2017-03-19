@@ -48,6 +48,81 @@ void set_cell(int x, int y, char color)
     board[y + BOARD_SIZE* x] = color;
 }
 
+/** Un joueur joue, mise à jour du tableau*/
+void tourjoueur(char joueur)
+{
+	printf ("donner une couleur\n");
+	char couleur = 'A';
+	scanf("%c",&couleur);
+	int a = 0; 		/**bouléen*/
+	while (a==0) {
+		int b=0;
+		int i , j ;
+		for (i = 0; i<BOARD_SIZE; i++) {
+			for (j = 0; j<BOARD_SIZE; j++) {
+				if (board[j + BOARD_SIZE*i]==couleur){
+					if (i==0 && j==0) { 
+						if (board[1]==joueur || board[BOARD_SIZE]==joueur){
+							b=1;
+							set_cell(0,0,joueur);
+						}
+					}
+
+					if (i==0) { 
+						if (board[j+1]==joueur || board[j-1]==joueur || board[j+BOARD_SIZE]==joueur){
+							b=1;
+							set_cell(i,j,joueur);
+						}
+					}
+					else if (j==0) { 
+						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur) {
+							b=1;
+							set_cell(i,j,joueur);
+						}
+					}
+					else if (i==BOARD_SIZE-1 && j==BOARD_SIZE-1) { 
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur){
+							b=1;
+							set_cell(i,j,joueur);
+						}
+					}
+
+					else if (i==BOARD_SIZE) { 
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+BOARD_SIZE]==joueur){
+							b=1;
+							set_cell(i,j,joueur);
+						}
+					}
+					else if (j==BOARD_SIZE) { 
+						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
+							b=1;
+							set_cell(i,j,joueur);
+						}
+					}
+					else {
+						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur) {
+							b=1;
+							set_cell(i,j,joueur);
+						}
+					}
+					
+				}	
+			}		
+		}
+		if (b==0) {a=1;}
+	}				
+	
+	printf("Current board state :\n");
+	int i , j ;
+	for (i = 0; i < BOARD_SIZE; i++) {
+        for (j = 0; j < BOARD_SIZE; j++) {
+			printf("%c",board[j+BOARD_SIZE*i]);   
+		}
+		printf("\n");
+	}
+
+}
+
 /** Prints the current state of the board on screen
  *
  * Implementation note: It would be nicer to do this with ncurse or even
@@ -60,10 +135,12 @@ void print_board(void)
     for (i = 0; i < BOARD_SIZE; i++) {
         for (j = 0; j < BOARD_SIZE; j++) {
 			if (i==0 && j==BOARD_SIZE-1) {			/** mettre des 0 dans les bords initiaux apparteanant aux joueurs*/
+				set_cell(i,j,'0');
 				printf("0");
 					}
 			else if (i==BOARD_SIZE-1 && j==0) {
-				printf("1");	
+				printf("1");
+				set_cell(i,j,'1');
 			}
 			else {
 			int a = rand() % 6;
@@ -84,6 +161,8 @@ int main(int argc, char **argv)
 	   "Current board state:\n");
 
     print_board();
+    
+    tourjoueur('0');
 
     return 0; // Everything went well
 }
