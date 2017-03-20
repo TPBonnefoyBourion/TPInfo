@@ -51,9 +51,12 @@ void set_cell(int x, int y, char color)
 /** Un joueur joue, mise à jour du tableau*/
 void tourjoueur(char joueur)
 {
+	printf("c'est le tour du joueur %c ;",joueur);
 	printf ("donner une couleur\n");
 	char couleur = 'A';
 	scanf("%c",&couleur);
+	char vide ='A';
+	scanf("%c",&vide);
 	int a = 0; 		/**bouléen*/
 	while (a==0) {
 		int b=0;
@@ -123,6 +126,7 @@ void tourjoueur(char joueur)
 
 }
 
+
 /** Prints the current state of the board on screen
  *
  * Implementation note: It would be nicer to do this with ncurse or even
@@ -154,6 +158,22 @@ void print_board(void)
 
 }
 
+/** fonction qui retourne le nombre de cases appartenent à un joueur*/
+int nombrecases (char joueur)
+{
+	int casesjoueur = 0 ;
+	int i,j ;
+	for (i = 0; i < BOARD_SIZE; i++) {
+        for (j = 0; j < BOARD_SIZE; j++) {
+			if (board[j+i*BOARD_SIZE]==joueur) {
+				casesjoueur = casesjoueur + 1 ;
+			}
+		}
+	}
+	return casesjoueur ;
+}
+		
+
 int main(int argc, char **argv)
 {
 	    printf("\n\nWelcome to the 7 wonders of the world of the 7 colors\n"
@@ -161,9 +181,13 @@ int main(int argc, char **argv)
 	   "Current board state:\n");
 
     print_board();
-    
-    tourjoueur('1');
+
+    while ((nombrecases('0') + nombrecases('1'))<900) {
+		tourjoueur('0');
+		tourjoueur('1');
+	}
+	
+	printf ("joueur 0 : %d ; joueur 1 : %d \n" , nombrecases('0'),nombrecases('1'));
 
     return 0; // Everything went well
 }
-
