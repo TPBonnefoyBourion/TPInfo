@@ -107,7 +107,7 @@ void tourjoueur(char joueur)
 					}
 
 					else if (i==BOARD_SIZE-1) { 
-						if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+1]==joueur){
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j+i*BOARD_SIZE+1]==joueur){
 							b=1;
 							set_cell(i,j,joueur);
 						}

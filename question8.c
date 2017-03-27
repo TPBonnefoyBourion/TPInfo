@@ -1,5 +1,5 @@
 /*
- * question7.c
+ * question8.c
  * 
  * Copyright 2017 Bourion <bourion@bourion-VirtualBox>
  * 
@@ -137,68 +137,82 @@ void tour(char joueur, char couleur)
 
 }
 
-int possible (char joueur , char couleur)
+int nbrpossible (char joueur , char couleur)
 {
 	int b;
 	b=0;
-	int i,j ;
-	for (i = 0; i<BOARD_SIZE; i++) {
-		for (j = 0; j<BOARD_SIZE; j++) {
-			if (board[j + BOARD_SIZE*i]==couleur){
-				if (i==0 && j==0) { 						
-					if (board[1]==joueur || board[BOARD_SIZE]==joueur){
-						b=1;
+	int a = 0; 		/**bouléen*/
+	while (a==0) {
+		int c=0;
+		int i , j ;
+		for (i = 0; i<BOARD_SIZE; i++) {
+			for (j = 0; j<BOARD_SIZE; j++) {
+				if (board[j + BOARD_SIZE*i]==couleur){
+					if (i==0 && j==0) { 
+						if (board[1]==joueur || board[BOARD_SIZE]==joueur){
+							b=b+1;
+							c=1;
+						}
 					}
-				}
-				if (i==0) { 
-					if (board[j+1]==joueur || board[j-1]==joueur || board[j+BOARD_SIZE]==joueur){
-						b=1;
+
+					if (i==0) { 
+						if (board[j+1]==joueur || board[j-1]==joueur || board[j+BOARD_SIZE]==joueur){
+							b=b+1;
+							c=1;
+						}
 					}
-				}
-				else if (j==0) { 
-					if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur) {
-						b=1;
+					else if (j==0) { 
+						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur) {
+							b=b+1;
+							c=1;
+						}
 					}
-				}
-				else if (i==BOARD_SIZE-1 && j==BOARD_SIZE-1) { 
-					if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur){
-						b=1;
+					else if (i==BOARD_SIZE-1 && j==BOARD_SIZE-1) { 
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur){
+							b=b+1;
+							c=1;
+						}
 					}
-				}
-				else if (i==BOARD_SIZE-1) { 
-					if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j+i*BOARD_SIZE+1]==joueur){
-						b=1;
+
+					else if (i==BOARD_SIZE-1) { 
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j+i*BOARD_SIZE+BOARD_SIZE]==joueur){
+							b=b+1;
+							c=1;
+						}
 					}
-				}
-				else if (j==BOARD_SIZE-1) { 
-					if (board[j+BOARD_SIZE*(i+1)]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
-						b=1;
+					else if (j==BOARD_SIZE-1) { 
+						if (board[j+BOARD_SIZE*(i+1)]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
+							b=b+1;
+							c=1;
+						}
 					}
-				}
-				else {
-					if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur) {
-						b=1;
+					else {
+						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur) {
+							b=b+1;
+							c=1;
+						}
 					}
-				}					
-			}	
-		}		
-	}
+					
+				}	
+			}		
+		}
+		if (c==0) {a=1;}
+	}				
 	return b;
 }
 	
 
 /**joueur artificiel choisissant une couleur de manière aléatoire parmi les couleurs qui peuvent ajouter des cases à sa zone puis le tableau est mis à jour*/
-void artificiel()
+void glouton()
 {
-	int a ;
-	a=0 ;
+	int max =nbrpossible('1','A'); ;
 	char couleur = 'A' ;
-	while(a==0) {
-		int x = rand() %6;
-		couleur = 'A'+ x ;
-		int b;
-		b=possible('1',couleur) ;
-		if (b==1) {a=1;} ;
+	int i ;
+	for (i=1;i<7;i++) {
+		if (nbrpossible('1', couleur +i) > max) {
+			max = nbrpossible('1', couleur +i) ;
+			couleur = couleur +i ;
+		}
 	}
 	printf("couleur choisie par l'ordinateur %c \n", couleur);
 	tour('1',couleur);
@@ -257,7 +271,7 @@ int main(int argc, char **argv)
 
     while (nombrecases('0')<50 && nombrecases('1')<50) {
 		joueur('0');
-		artificiel();
+		glouton();
 	}
 	
 	printf ("pourcentage joueur 0 : %d ; pourcentage ordinateur : %d \n" , nombrecases('0'),nombrecases('1'));
