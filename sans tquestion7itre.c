@@ -1,5 +1,5 @@
 /*
- * question1.c
+ * question7.c
  * 
  * Copyright 2017 Bourion <bourion@bourion-VirtualBox>
  * 
@@ -48,12 +48,25 @@ void set_cell(int x, int y, char color)
     board[y + BOARD_SIZE* x] = color;
 }
 
-/** Un joueur joue, mise à jour du tableau*/
-void tourjoueur(char joueur)
+/** fonction qui retourne le nombre de cases appartenent à un joueur*/
+int nombrecases (char joueur)
 {
-	printf ("donner une couleur\n");
-	char couleur = 'A';
-	scanf("%c",&couleur);
+	int casesjoueur = 0 ;
+	int i,j ;
+	for (i = 0; i < BOARD_SIZE; i++) {
+        for (j = 0; j < BOARD_SIZE; j++) {
+			if (board[j+i*BOARD_SIZE]==joueur) {
+				casesjoueur = casesjoueur + 1 ;
+			}
+		}
+	}
+	return (casesjoueur/9);
+}
+	
+
+/** Mise à jour du tableau*/
+void tour(char joueur, char couleur)
+{
 	int a = 0; 		/**bouléen*/
 	while (a==0) {
 		int b=0;
@@ -87,14 +100,14 @@ void tourjoueur(char joueur)
 						}
 					}
 
-					else if (i==BOARD_SIZE-1) { 
-						if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+1]==joueur){
+					else if (i==BOARD_SIZE) { 
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+BOARD_SIZE]==joueur){
 							b=1;
 							set_cell(i,j,joueur);
 						}
 					}
-					else if (j==BOARD_SIZE-1) { 
-						if (board[j+BOARD_SIZE*(i+1)]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
+					else if (j==BOARD_SIZE) { 
+						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
 							b=1;
 							set_cell(i,j,joueur);
 						}
@@ -120,7 +133,81 @@ void tourjoueur(char joueur)
 		}
 		printf("\n");
 	}
+	printf("pourcentage joueur : %d  ; pourcentage ordinateur : %d  \n", nombrecases('0') , nombrecases('1'));
 
+}
+
+int possible (char joueur , char couleur)
+{
+	b=0,
+	int i,j ;
+	for (i = 0; i<BOARD_SIZE; i++) {
+		for (j = 0; j<BOARD_SIZE; j++) {
+			if (board[j + BOARD_SIZE*i]==couleur){
+				if (i==0 && j==0) { 						
+					if (board[1]==joueur || board[BOARD_SIZE]==joueur){
+					}
+				}
+				if (i==0) { 
+					if (board[j+1]==joueur || board[j-1]==joueur || board[j+BOARD_SIZE]==joueur){
+						b=1;
+					}
+				}
+				else if (j==0) { 
+					if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur) {
+						b=1;
+					}
+				}
+				else if (i==BOARD_SIZE-1 && j==BOARD_SIZE-1) { 
+					if (board[j+i*BOARD_SIZE-1]==joueur || board[j+i*BOARD_SIZE-BOARD_SIZE]==joueur){
+						b=1;
+					}
+				}
+				else if (i==BOARD_SIZE) { 
+					if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+BOARD_SIZE]==joueur){
+						b=1;
+					}
+				}
+				else if (j==BOARD_SIZE) { 
+					if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
+						b=1;
+					}
+				}
+				else {
+					if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur || board[j+BOARD_SIZE*i+BOARD_SIZE]==joueur) {
+						b=1;
+					}
+				}					
+			}	
+		}		
+	}
+	return b;
+}
+	
+
+/**joueur artificiel choisissant une couleur de manière aléatoire parmi les couleurs qui peuvent ajouter des cases à sa zone puis le tableau est mis à jour*/
+void artificiel()
+{
+	a=0
+	while(a==0) {
+		int x = rand() %6;
+		char couleur = 'A'+ x ;
+		b=possible('1',couleur) ;
+		if (b==1) {a=1;} ;
+	}
+	printf("couleur choisie par l'ordinateur %c \n", couleur);
+	tour('1',couleur);
+}
+
+/**tour du joueur qui choisi une couleur puis la fonction qui met à jour le tableau se déclenche*/
+void joueur(char joueur) {
+	printf("c'est le tour du joueur");
+	printf ("donner une couleur\n");
+	char couleur = 'A';
+	scanf("%c",&couleur);
+	char vide ='A';
+	scanf("%c",&vide);
+	tour(joueur,couleur);
 }
 
 /** Prints the current state of the board on screen
@@ -153,6 +240,7 @@ void print_board(void)
     }
 
 }
+	
 
 int main(int argc, char **argv)
 {
@@ -161,9 +249,13 @@ int main(int argc, char **argv)
 	   "Current board state:\n");
 
     print_board();
-    
-    tourjoueur('1');
+
+    while (nombrecases('0')<50 && nombrecases('1')<50) {
+		joueur('0');
+		artificiel();
+	}
+	
+	printf ("pourcentage joueur 0 : %d ; pourcentage ordinateur : %d \n" , nombrecases('0'),nombrecases('1'));
 
     return 0; // Everything went well
 }
-

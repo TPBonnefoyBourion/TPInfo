@@ -106,14 +106,14 @@ void tourjoueur(char joueur)
 						}
 					}
 
-					else if (i==BOARD_SIZE) { 
-						if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+BOARD_SIZE]==joueur){
+					else if (i==BOARD_SIZE-1) { 
+						if (board[j+i*BOARD_SIZE-1]==joueur || board[j-i*BOARD_SIZE-BOARD_SIZE]==joueur || board[j-i*BOARD_SIZE+1]==joueur){
 							b=1;
 							set_cell(i,j,joueur);
 						}
 					}
-					else if (j==BOARD_SIZE) { 
-						if (board[j+BOARD_SIZE*i+1]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
+					else if (j==BOARD_SIZE-1) { 
+						if (board[j+BOARD_SIZE*(i+1)]==joueur || board[j+BOARD_SIZE*i-1]==joueur|| board[j+BOARD_SIZE*i-BOARD_SIZE]==joueur){
 							b=1;
 							set_cell(i,j,joueur);
 						}
